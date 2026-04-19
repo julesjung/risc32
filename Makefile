@@ -6,40 +6,45 @@ VERILATOR = verilator
 CFLAGS = -march=rv32i -mabi=ilp32 -nostdlib
 LDFLAGS = -T src/link.ld
 
-SOURCES = examples/program.s
+SRC = examples/program.s
 BUILD = build
 
 ELF = $(BUILD)/program.elf
 BIN = $(BUILD)/program.bin
 MEM = $(BUILD)/program.mem
 
-HDLSRC = hdl/cpu.v
-EMULATOR = $(BUILD)/Vcpu
+HDLSRC = \
+	sim/top.v \
+	hdl/cpu.v \
+	hdl/regfile.v \
+	hdl/control.v
+SIMSRC = sim/main.cpp
+SIM = $(BUILD)/Vtop
 
-.PHONY: all dump emulate clean
+.PHONY: all dump sim clean
 
-all: $(BIN) $(MEM) $(EMULATOR)
+all: $(BIN) $(MEM) $(SIM)
 
 $(BUILD):
 	mkdir -p build
 
-$(ELF): $(SOURCES) | $(BUILD)
-	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
+$(ELF): $(SRC) | $(BUILD)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(SRC) -o $(ELF)
 
 $(BIN): $(ELF) | $(BUILD)
-	$(OBJCOPY) -O binary $< $@
+	$(OBJCOPY) -O binary $(ELF) $(BIN)
 
 $(MEM): $(ELF) | $(BUILD)
-	$(OBJCOPY) -O verilog $< $@
+	$(OBJCOPY) -O verilog $(ELF) $(MEM)
 
 dump: $(ELF)
-	$(OBJDUMP) -d $<
+	$(OBJDUMP) -d $(ELF)
 
-$(EMULATOR): $(HDLSRC)
-	$(VERILATOR) --binary $^ --top-module cpu --build -Mdir $(BUILD)
+$(SIM): $(HDLSRC)
+	$(VERILATOR) --cc --exe --top-module top --build -Mdir $(BUILD) $(HDLSRC) $(SIMSRC)
 
-emulate: $(EMULATOR) $(MEM)
-	$(EMULATOR) +mem=$(MEM)
+sim: $(SIM) $(MEM)
+	$(SIM) +mem=$(MEM)
 
 clean:
 	rm -rf $(BUILD)
