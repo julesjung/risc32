@@ -1,5 +1,4 @@
 module regfile(
-    input wire clk,
     input wire [4:0] raddr,
     output wire [31:0] rdata
 );
