@@ -5,6 +5,7 @@ module datapath(
     input reg_write_enable,
     input [4:0] reg_waddr,
     input [4:0] reg_raddr1,
+    input [4:0] reg_raddr2,
     input [3:0] alu_op,
     input alu_imm_enable,
     input [31:0] alu_imm,
@@ -24,7 +25,6 @@ memory mem(
 
 wire [31:0] reg_wdata = alu_result;
 
-wire [4:0] reg_raddr2;
 wire [31:0] reg_rdata1, reg_rdata2;
 
 regfile regfile_inst(

@@ -18,6 +18,7 @@ wire ebreak;
 wire reg_write_enable;
 wire [4:0] reg_waddr;
 wire [4:0] reg_raddr1;
+wire [4:0] reg_raddr2;
 wire [3:0] alu_op;
 wire alu_imm_enable;
 wire [31:0] alu_imm;
@@ -28,6 +29,7 @@ control ctrl(
     .reg_write_enable(reg_write_enable),
     .reg_waddr(reg_waddr),
     .reg_raddr1(reg_raddr1),
+    .reg_raddr2(reg_raddr2),
     .alu_imm_enable(alu_imm_enable),
     .alu_imm(alu_imm),
     .alu_op(alu_op),
@@ -41,6 +43,7 @@ datapath dp(
     .reg_write_enable(reg_write_enable),
     .reg_waddr(reg_waddr),
     .reg_raddr1(reg_raddr1),
+    .reg_raddr2(reg_raddr2),
     .alu_op(alu_op),
     .alu_imm_enable(alu_imm_enable),
     .alu_imm(alu_imm),

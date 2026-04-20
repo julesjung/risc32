@@ -1,4 +1,4 @@
-`include "hdl/include/alu.vh";
+`include "hdl/opcodes.v";
 
 module alu(
     input [3:0] op,
