@@ -1,15 +1,17 @@
+`include "hdl/include/alu.vh";
+`include "hdl/include/opcodes.vh";
+
 module control(
-    input reg [1:0] state,
-    input wire [31:0] instruction,
+    input [31:0] instruction,
+    output [1:0] state,
+    output reg reg_write_enable,
+    output reg [4:0] reg_waddr,
+    output reg [4:0] reg_raddr1,
+    output reg alu_imm_enable,
+    output reg [31:0] alu_imm,
+    output reg [3:0] alu_op,
     output reg ebreak
 );
-
-localparam OPCODE_OP_IMM = 7'b001_0011;
-localparam FUNCT3_ADDI = 3'b000;
-localparam OPCODE_SYSTEM = 7'b111_0011;
-localparam FUNCT3_PRIV = 3'b000;
-localparam FUNCT12_ECALL = 12'b0000_0000_0000;
-localparam FUNCT12_EBREAK = 12'b0000_0000_0001;
 
 wire [6:0] opcode = instruction[6:0];
 wire [4:0] rd = instruction[11:7];
@@ -21,19 +23,28 @@ wire [6:0] funct7 = instruction[31:25];
 wire [11:0] funct12 = instruction[31:20];
 
 always @(*) begin
-    ebreak = 0'b0;
+    reg_write_enable = 0;
+    reg_waddr = 0;
+    alu_imm_enable = 0;
+    alu_imm = 0;
+    alu_op = 0;
+    ebreak = 0;
 
     if (state == 2) case (opcode)
-        OPCODE_OP_IMM: case (funct3)
-            FUNCT3_ADDI: begin
-                $display("addi");
-            end
-            default: begin end
-        endcase
-        OPCODE_SYSTEM: if (funct3 == FUNCT3_PRIV && funct12 == FUNCT12_EBREAK) begin
-            $display("ebreak");
-            ebreak = 1'b1;
+        `OPCODE_OP_IMM: begin
+            reg_waddr = rd;
+            reg_raddr1 = rs1;
+            reg_write_enable = 1;
+            alu_imm_enable = 1;
+            alu_imm = {{20{imm12[11]}}, imm12};
+            case (funct3)
+                `FUNCT3_ADDI: begin
+                    alu_op = `ALU_ADD;
+                end
+                default: begin end
+            endcase
         end
+        `OPCODE_SYSTEM: if (funct3 == `FUNCT3_PRIV && funct12 == `FUNCT12_EBREAK) ebreak = 1;
         default: begin end
     endcase
 end

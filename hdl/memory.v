@@ -1,6 +1,6 @@
 module memory(
-    input wire clk,
-    input wire [31:0] raddr,
+    input clk,
+    input [31:0] raddr,
     output reg [31:0] rdata
 );
 
@@ -14,13 +14,11 @@ initial begin
     end
 end
 
-always @(posedge clk) begin
-    rdata <= {
-        ram[raddr + 3],
-        ram[raddr + 2],
-        ram[raddr + 1],
-        ram[raddr]
-    };
-end
+assign rdata = {
+    ram[raddr + 3],
+    ram[raddr + 2],
+    ram[raddr + 1],
+    ram[raddr]
+};
 
 endmodule

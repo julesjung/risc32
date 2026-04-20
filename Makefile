@@ -11,9 +11,11 @@ SRC = examples/program.s
 HDLSRC = \
 	sim/top.v \
 	hdl/cpu.v \
+	hdl/control.v \
+	hdl/datapath.v \
 	hdl/memory.v \
 	hdl/regfile.v \
-	hdl/control.v
+	hdl/alu.v
 SIMSRC = sim/main.cpp
 
 BUILD = build

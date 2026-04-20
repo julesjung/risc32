@@ -1,56 +1,50 @@
 module cpu(
-    input wire clk
+    input clk
 );
 
 reg [1:0] state;
 
-wire [4:0] reg_raddr;
-wire [31:0] reg_rdata;
-
-regfile regfile_inst(
-    .raddr(reg_raddr),
-    .rdata(reg_rdata)
-);
-
-reg [31:0] instruction;
-
-reg [31:0] memory_raddr;
-wire [31:0] memory_rdata;
-
-memory memory_inst(
-    .clk(clk),
-    .raddr(memory_raddr),
-    .rdata(memory_rdata)
-);
-
-reg [31:0] pc;
-
 always @(posedge clk) begin
     case (state)
-        2'd0: begin
-            memory_raddr <= pc;
-            pc <= pc + 4;
-            state <= 2'd1;
-        end
-        2'd1: begin
-            state <= 2'd2;
-        end
-        2'd2: begin
-            state <= 2'd0;
-        end
+        2'd0: state <= 2'd1;
+        2'd1: state <= 2'd2;
+        2'd2: state <= 2'd0;
         default: state <= 2'd0;
     endcase
-    if (ebreak) begin
-        $finish();
-    end
 end
 
+wire [31:0] instruction;
 wire ebreak;
+wire reg_write_enable;
+wire [4:0] reg_waddr;
+wire [4:0] reg_raddr1;
+wire [3:0] alu_op;
+wire alu_imm_enable;
+wire [31:0] alu_imm;
 
-control control_inst(
-    .instruction(memory_rdata),
+control ctrl(
+    .instruction(instruction),
     .state(state),
+    .reg_write_enable(reg_write_enable),
+    .reg_waddr(reg_waddr),
+    .reg_raddr1(reg_raddr1),
+    .alu_imm_enable(alu_imm_enable),
+    .alu_imm(alu_imm),
+    .alu_op(alu_op),
     .ebreak(ebreak)
+);
+
+datapath dp(
+    .clk(clk),
+    .state(state),
+    .ebreak(ebreak),
+    .reg_write_enable(reg_write_enable),
+    .reg_waddr(reg_waddr),
+    .reg_raddr1(reg_raddr1),
+    .alu_op(alu_op),
+    .alu_imm_enable(alu_imm_enable),
+    .alu_imm(alu_imm),
+    .instruction(instruction)
 );
 
 endmodule
