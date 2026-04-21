@@ -7,7 +7,7 @@ CFLAGS = -march=rv32i -mabi=ilp32 -nostdlib
 LDFLAGS = -T src/link.ld
 VLFLAGS = --cc --exe --top-module top --build
 
-SRC = examples/program.s
+SRC = examples/fibonacci.s
 HDLSRC = \
 	sim/top.v \
 	hdl/cpu.v \
@@ -43,7 +43,7 @@ $(MEM): $(ELF) | $(BUILD)
 dump: $(ELF)
 	$(OBJDUMP) -d $(ELF)
 
-$(SIM): $(HDLSRC)
+$(SIM): $(HDLSRC) $(SIMSRC)
 	$(VL) $(VLFLAGS) -Mdir $(BUILD) $(HDLSRC) $(SIMSRC)
 
 sim: $(SIM) $(MEM)

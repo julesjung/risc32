@@ -1,3 +1,5 @@
+`include "hdl/opcodes.v"
+
 module datapath(
     input clk,
     input [1:0] state,
@@ -9,6 +11,11 @@ module datapath(
     input [3:0] alu_op,
     input alu_imm_enable,
     input [31:0] alu_imm,
+    input jump_enable,
+    input signed [31:0] jump_offset,
+    input branch_enable,
+    input [2:0] branch_type,
+    input signed [31:0] branch_offset,
     output reg [31:0] instruction
 );
 
@@ -41,26 +48,41 @@ regfile regfile_inst(
 wire [31:0] alu_a = reg_rdata1;
 wire [31:0] alu_b = alu_imm_enable ? alu_imm : reg_rdata2;
 wire [31:0] alu_result;
+wire zero_flag;
 
 alu alu_inst(
     .op(alu_op),
     .a(alu_a),
     .b(alu_b),
-    .result(alu_result)
+    .result(alu_result),
+    .zero_flag(zero_flag)
 );
 
+wire take_branch = (branch_enable) ? (branch_type == `FUNCT3_BEQ && zero_flag) || (branch_type == `FUNCT3_BNE && !zero_flag) : 0;
+
+initial begin
+    pc = 0;
+    memory_raddr = pc;
+end
+
 always @(posedge clk) begin
-    $display("instruction: %08h, state: %1d, x1: %08h, x2: %08h, alu_result: %08h", instruction, state, regfile_inst.regs[1], regfile_inst.regs[2], alu_result);
     case (state)
         2'd0: begin
             memory_raddr <= pc;
-            pc <= pc + 4;
         end
         2'd1: begin
             instruction <= memory_rdata;
         end
         2'd2: begin
-            if (ebreak) $finish;
+            if (branch_enable && zero_flag) $finish;
+            if (ebreak)
+                $finish;
+            else if (jump_enable)
+                pc <= pc + jump_offset;
+            else if (take_branch)
+                pc <= pc + branch_offset;
+            else
+                pc <= pc + 4;
         end
         default: begin end
     endcase
