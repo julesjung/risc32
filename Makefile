@@ -7,7 +7,7 @@ CFLAGS = -march=rv32i -mabi=ilp32 -nostdlib
 LDFLAGS = -T src/link.ld
 VLFLAGS = --cc --exe --top-module top --build
 
-SRC ?= examples/fibonacci.s
+SRC ?= tests/branches.S
 HDLSRC = \
 	sim/top.v \
 	hdl/cpu.v \

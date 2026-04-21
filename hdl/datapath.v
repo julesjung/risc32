@@ -49,16 +49,33 @@ wire [31:0] alu_a = reg_read_data1;
 wire [31:0] alu_b = (alu_immediate_enable) ? immediate : reg_read_data2;
 wire [31:0] alu_result;
 wire zero_flag;
+wire sign_flag;
+wire carry_flag;
+wire overflow_flag;
 
 alu alu_inst(
     .opcode(alu_opcode),
     .a(alu_a),
     .b(alu_b),
     .result(alu_result),
-    .zero_flag(zero_flag)
+    .zero_flag(zero_flag),
+    .sign_flag(sign_flag),
+    .carry_flag(carry_flag),
+    .overflow_flag(overflow_flag)
 );
 
-wire take_branch = (branch_enable) ? (branch_type == `FUNCT3_BEQ && zero_flag) || (branch_type == `FUNCT3_BNE && !zero_flag) : 0;
+
+wire less_than_signed = (sign_flag ^ overflow_flag);
+wire less_than_unsigned = !carry_flag;
+wire take_branch =
+    (branch_enable) ?
+        (branch_type == `FUNCT3_BEQ && zero_flag) ||
+        (branch_type == `FUNCT3_BNE && !zero_flag) ||
+        (branch_type == `FUNCT3_BLT && less_than_signed) ||
+        (branch_type == `FUNCT3_BGE && !less_than_signed) ||
+        (branch_type == `FUNCT3_BLTU && less_than_unsigned) ||
+        (branch_type == `FUNCT3_BGEU && !less_than_unsigned) :
+    0;
 
 initial begin
     pc = 0;

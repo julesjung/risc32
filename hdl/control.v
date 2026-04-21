@@ -79,6 +79,7 @@ always @(*) begin
                 `FUNCT3_ADD: begin
                     case (funct7)
                         `FUNCT7_ADD: alu_opcode = `ALU_ADD;
+                        `FUNCT7_SUB: alu_opcode = `ALU_SUB;
                         default: begin end
                     endcase
                 end
