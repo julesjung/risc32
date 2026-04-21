@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
 
     std::string line;
 
-    while (!contextp->gotFinish()) {
+    while (true) {
         printf("%08x> ", top->pc);
 
         if (!std::getline(std::cin, line)) break;
@@ -42,9 +42,10 @@ int main(int argc, char** argv) {
             for (int i = 0; i < n; i++) step_instruction(top);
 
         } else if (cmd == "run" || cmd == "R") {
-            while (!contextp->gotFinish()) {
+            do {
                 tick(top);
-            }
+            } while (!contextp->gotFinish());
+
         } else if (cmd == "regs" || cmd == "r") {
             for (int i = 0; i < 32; i++)
                 printf("x%02d=%08x\n", i, top->regs[i]);
@@ -52,31 +53,9 @@ int main(int argc, char** argv) {
         } else if (cmd == "instruction" || cmd == "ir" || cmd == "i" ) {
             printf("IR=%08x\n", top->instruction);
 
-        } else if (cmd == "quit" || cmd == "q") {
-            break;
-        }
-    }
-
-    while (!contextp->gotFinish()) {
-        tick(top);
-    }
-
-    while (true) {
-        printf("%08x> ", top->pc);
-
-        if (!std::getline(std::cin, line)) break;
-
-        std::stringstream ss(line);
-
-        std::string cmd = "s";
-        ss >> cmd;
-
-        if (cmd == "regs" || cmd == "r") {
-            for (int i = 0; i < 32; i++)
-                printf("x%02d=%08x\n", i, top->regs[i]);
-
-        } else if (cmd == "instruction" || cmd == "ir" || cmd == "i" ) {
-            printf("IR=%08x\n", top->instruction);
+        } else if (cmd == "clear") {
+            printf("\033[2J");
+            printf("\033[H");
 
         } else if (cmd == "quit" || cmd == "q") {
             break;
