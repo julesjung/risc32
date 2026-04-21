@@ -1,7 +1,7 @@
 `include "hdl/opcodes.v";
 
 module alu(
-    input [3:0] op,
+    input [3:0] opcode,
     input [31:0] a,
     input [31:0] b,
     output reg [31:0] result,
@@ -9,7 +9,7 @@ module alu(
 );
 
 always @(*) begin
-    case (op)
+    case (opcode)
         `ALU_ADD: result = a + b;
         `ALU_SUB: result = a - b;
         default: begin end

@@ -6,34 +6,34 @@ wire [31:0] instruction;
 reg [1:0] state;
 wire ebreak;
 wire reg_write_enable;
-wire [4:0] reg_waddr;
-wire [4:0] reg_raddr1;
-wire [4:0] reg_raddr2;
-wire [3:0] alu_op;
-wire alu_imm_enable;
-wire [31:0] alu_imm;
+wire [4:0] reg_write_addr;
+wire [4:0] reg_read_addr1;
+wire [4:0] reg_read_addr2;
+wire [3:0] alu_opcode;
+wire alu_write_enable;
+wire alu_immediate_enable;
+wire [31:0] immediate;
 wire jump_enable;
-wire signed [31:0] jump_offset;
 wire branch_enable;
 wire [2:0] branch_type;
-wire signed [31:0] branch_offset;
+wire signed [31:0] address_offset;
 
 control ctrl(
     .instruction(instruction),
     .state(state),
     .ebreak(ebreak),
     .reg_write_enable(reg_write_enable),
-    .reg_waddr(reg_waddr),
-    .reg_raddr1(reg_raddr1),
-    .reg_raddr2(reg_raddr2),
-    .alu_op(alu_op),
-    .alu_imm_enable(alu_imm_enable),
-    .alu_imm(alu_imm),
+    .reg_write_addr(reg_write_addr),
+    .reg_read_addr1(reg_read_addr1),
+    .reg_read_addr2(reg_read_addr2),
+    .alu_opcode(alu_opcode),
+    .alu_write_enable(alu_write_enable),
+    .alu_immediate_enable(alu_immediate_enable),
+    .immediate(immediate),
     .jump_enable(jump_enable),
-    .jump_offset(jump_offset),
     .branch_enable(branch_enable),
     .branch_type(branch_type),
-    .branch_offset(branch_offset)
+    .address_offset(address_offset)
 );
 
 datapath dp(
@@ -41,17 +41,17 @@ datapath dp(
     .state(state),
     .ebreak(ebreak),
     .reg_write_enable(reg_write_enable),
-    .reg_waddr(reg_waddr),
-    .reg_raddr1(reg_raddr1),
-    .reg_raddr2(reg_raddr2),
-    .alu_op(alu_op),
-    .alu_imm_enable(alu_imm_enable),
-    .alu_imm(alu_imm),
+    .reg_write_addr(reg_write_addr),
+    .reg_read_addr1(reg_read_addr1),
+    .reg_read_addr2(reg_read_addr2),
+    .alu_opcode(alu_opcode),
+    .alu_write_enable(alu_write_enable),
+    .alu_immediate_enable(alu_immediate_enable),
+    .immediate(immediate),
     .jump_enable(jump_enable),
-    .jump_offset(jump_offset),
     .branch_enable(branch_enable),
     .branch_type(branch_type),
-    .branch_offset(branch_offset),
+    .address_offset(address_offset),
     .instruction(instruction)
 );
 

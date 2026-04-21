@@ -1,6 +1,6 @@
-#include <cstdio>
 #include <iostream>
 #include <sstream>
+#include <cstdio>
 #include <verilated.h>
 #include "Vtop.h"
 
@@ -54,10 +54,9 @@ int main(int argc, char** argv) {
             printf("IR=%08x\n", top->instruction);
 
         } else if (cmd == "clear") {
-            printf("\033[2J");
-            printf("\033[H");
+            printf("\033[2J\033[H");
 
-        } else if (cmd == "quit" || cmd == "q") {
+        } else if (cmd == "quit" || cmd == "exit" || cmd == "q") {
             break;
         }
     }
