@@ -1,4 +1,4 @@
-`include "hdl/opcodes.v";
+`include "rtl/opcodes.v";
 
 module control(
     input [31:0] instruction,
@@ -8,7 +8,7 @@ module control(
     output reg [4:0] reg_write_addr,
     output reg [4:0] reg_read_addr1,
     output reg [4:0] reg_read_addr2,
-    output reg [3:0] alu_opcode,
+    output reg [2:0] alu_opcode,
     output reg alu_write_enable,
     output reg alu_immediate_enable,
     output reg [31:0] immediate,
@@ -76,13 +76,24 @@ always @(*) begin
             reg_read_addr1 = rs1;
             reg_read_addr2 = rs2;
             case (funct3)
-                `FUNCT3_ADD: begin
+                `FUNCT3_ADDSUB: begin
                     case (funct7)
                         `FUNCT7_ADD: alu_opcode = `ALU_ADD;
                         `FUNCT7_SUB: alu_opcode = `ALU_SUB;
                         default: begin end
                     endcase
                 end
+                `FUNCT3_SLL: alu_opcode = `ALU_SLL;
+                `FUNCT3_XOR: alu_opcode = `ALU_XOR;
+                `FUNCT3_SR: begin
+                    case (funct7)
+                        `FUNCT7_SRL: alu_opcode = `ALU_SRL;
+                        `FUNCT7_SRA: alu_opcode = `ALU_SRA;
+                        default: begin end
+                    endcase
+                end
+                `FUNCT3_OR: alu_opcode = `ALU_OR;
+                `FUNCT3_AND: alu_opcode = `ALU_AND;
                 default: begin end
             endcase
             alu_write_enable = 1;

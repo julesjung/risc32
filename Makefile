@@ -4,18 +4,18 @@ OBJDUMP = riscv32-unknown-elf-objdump
 VL = verilator
 
 CFLAGS = -march=rv32i -mabi=ilp32 -nostdlib
-LDFLAGS = -T src/link.ld
+LDFLAGS = -T ld/link.ld
 VLFLAGS = --cc --exe --top-module top --build
 
-SRC ?= tests/branches.S
+ASMSRC ?= asm/bitwise.s
 HDLSRC = \
 	sim/top.v \
-	hdl/cpu.v \
-	hdl/control.v \
-	hdl/datapath.v \
-	hdl/memory.v \
-	hdl/regfile.v \
-	hdl/alu.v
+	rtl/cpu.v \
+	rtl/control.v \
+	rtl/datapath.v \
+	rtl/memory.v \
+	rtl/regfile.v \
+	rtl/alu.v
 SIMSRC = sim/main.cpp
 
 BUILD = build
@@ -31,8 +31,8 @@ all: $(BIN) $(MEM) $(SIM)
 $(BUILD):
 	mkdir -p build
 
-$(ELF): $(SRC) | $(BUILD)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(SRC) -o $(ELF)
+$(ELF): $(ASMSRC) | $(BUILD)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(ASMSRC) -o $(ELF)
 
 $(BIN): $(ELF) | $(BUILD)
 	$(OBJCOPY) -O binary $(ELF) $(BIN)

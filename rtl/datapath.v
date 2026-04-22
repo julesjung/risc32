@@ -1,4 +1,4 @@
-`include "hdl/opcodes.v"
+`include "rtl/opcodes.v"
 
 module datapath(
     input clk,
@@ -8,7 +8,7 @@ module datapath(
     input [4:0] reg_write_addr,
     input [4:0] reg_read_addr1,
     input [4:0] reg_read_addr2,
-    input [3:0] alu_opcode,
+    input [2:0] alu_opcode,
     input alu_write_enable,
     input alu_immediate_enable,
     input [31:0] immediate,

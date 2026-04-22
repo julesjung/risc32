@@ -9,7 +9,7 @@ wire reg_write_enable;
 wire [4:0] reg_write_addr;
 wire [4:0] reg_read_addr1;
 wire [4:0] reg_read_addr2;
-wire [3:0] alu_opcode;
+wire [2:0] alu_opcode;
 wire alu_write_enable;
 wire alu_immediate_enable;
 wire [31:0] immediate;
