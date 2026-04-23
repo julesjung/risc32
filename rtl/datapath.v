@@ -1,4 +1,4 @@
-`include "rtl/opcodes.v"
+`include "opcodes.v"
 
 module datapath(
     input clk,

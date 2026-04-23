@@ -5,9 +5,9 @@ VL = verilator
 
 CFLAGS = -march=rv32i -mabi=ilp32 -nostdlib
 LDFLAGS = -T ld/link.ld
-VLFLAGS = --cc --exe --top-module top --build
+VLFLAGS = --cc --exe --top-module top --build +incdir+rtl +define+MEMORY_FILE
 
-ASMSRC ?= asm/bitwise.s
+ASMSRC ?= asm/fibonacci.s
 HDLSRC = \
 	sim/top.v \
 	rtl/cpu.v \

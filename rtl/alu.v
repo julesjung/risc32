@@ -1,4 +1,4 @@
-`include "rtl/opcodes.v";
+`include "opcodes.v"
 
 module alu(
     input [2:0] opcode,

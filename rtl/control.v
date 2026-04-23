@@ -1,4 +1,4 @@
-`include "rtl/opcodes.v";
+`include "opcodes.v"
 
 module control(
     input [31:0] instruction,
