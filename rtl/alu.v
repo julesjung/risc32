@@ -22,9 +22,10 @@ always @(*) begin
         `ALU_SLL: result = a << b[4:0];
         `ALU_XOR: result = a ^ b;
         `ALU_SRL: result = a >> b[4:0];
-        `ALU_SRA: result = a >>> b[4:0];
+        `ALU_SRA: result = $unsigned($signed(a) >>> b[4:0]);
         `ALU_OR: result = a | b;
         `ALU_AND: result = a & b;
+        default: begin end
     endcase
 end
 
