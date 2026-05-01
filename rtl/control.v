@@ -61,9 +61,16 @@ always @(*) begin
             reg_write_addr = rd;
             reg_read_addr1 = rs1;
             case (funct3)
-                `FUNCT3_ADDI: begin
-                    alu_opcode = `ALU_ADD;
-                end
+                `FUNCT3_ADDI: alu_opcode = `ALU_ADD;
+                `FUNCT3_SLLI: alu_opcode = `ALU_SLL;
+                `FUNCT3_XORI: alu_opcode = `ALU_XOR;
+                `FUNCT3_SRI: case (funct7)
+                    `FUNCT7_SRLI: alu_opcode = `ALU_SRL;
+                    `FUNCT7_SRAI: alu_opcode = `ALU_SRA;
+                    default: begin end
+                endcase
+                `FUNCT3_ORI: alu_opcode = `ALU_OR;
+                `FUNCT3_ANDI: alu_opcode = `ALU_AND;
                 default: begin end
             endcase
             alu_write_enable = 1;
@@ -76,22 +83,18 @@ always @(*) begin
             reg_read_addr1 = rs1;
             reg_read_addr2 = rs2;
             case (funct3)
-                `FUNCT3_ADDSUB: begin
-                    case (funct7)
-                        `FUNCT7_ADD: alu_opcode = `ALU_ADD;
-                        `FUNCT7_SUB: alu_opcode = `ALU_SUB;
-                        default: begin end
-                    endcase
-                end
+                `FUNCT3_ADDSUB: case (funct7)
+                    `FUNCT7_ADD: alu_opcode = `ALU_ADD;
+                    `FUNCT7_SUB: alu_opcode = `ALU_SUB;
+                    default: begin end
+                endcase
                 `FUNCT3_SLL: alu_opcode = `ALU_SLL;
                 `FUNCT3_XOR: alu_opcode = `ALU_XOR;
-                `FUNCT3_SR: begin
-                    case (funct7)
-                        `FUNCT7_SRL: alu_opcode = `ALU_SRL;
-                        `FUNCT7_SRA: alu_opcode = `ALU_SRA;
-                        default: begin end
-                    endcase
-                end
+                `FUNCT3_SR: case (funct7)
+                    `FUNCT7_SRL: alu_opcode = `ALU_SRL;
+                    `FUNCT7_SRA: alu_opcode = `ALU_SRA;
+                    default: begin end
+                endcase
                 `FUNCT3_OR: alu_opcode = `ALU_OR;
                 `FUNCT3_AND: alu_opcode = `ALU_AND;
                 default: begin end
